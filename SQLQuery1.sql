@@ -1,0 +1,1 @@
+sp_findtext 'anniversary'
