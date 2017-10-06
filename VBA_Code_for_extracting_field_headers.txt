@@ -1,0 +1,63 @@
+Option Compare Database
+Option Explicit
+
+Public Hcmd As ADODB.Command
+Public Hconn As ADODB.Connection
+
+Sub OpenSQLConnection()
+' Opens the ADO Connection to SQLServer once for the entire application
+
+Dim ServerName As String
+Dim DatabaseName As String
+
+''CHANGE THE SERVER & DB NAME WHEN NEEDED
+ServerName = "SPSVRSQL01"
+DatabaseName = "MIReporting"
+
+Set Hconn = New ADODB.Connection
+Set Hcmd = New ADODB.Command
+
+Hconn.Provider = "sqloledb"
+Hconn.Properties("Data Source").Value = ServerName
+Hconn.Properties("Initial Catalog").Value = DatabaseName
+Hconn.Properties("Integrated Security").Value = "SSPI"
+Hconn.CommandTimeout = 12000
+Hconn.ConnectionTimeout = 12000
+Hconn.Open
+
+End Sub
+
+
+Sub CloseSQLConnection()
+' closes the ADO Connection to SQLServer
+
+Hconn.Close
+
+Set Hconn = Nothing
+
+End Sub
+
+Function QueryDB()
+Dim rst As ADODB.Recordset
+Dim fld As ADODB.Field
+
+
+
+Call OpenSQLConnection
+Set rst = New ADODB.Recordset
+'Set flds = rst.Fields
+
+''OBVIOUSLY CHANGE THIS TABLE NAME TO YOUR OWN
+rst.Open "SELECT * FROM Discounts_Project", Hconn
+
+
+Dim TotalCount As Integer
+TotalCount = rst.Fields.Count
+
+For Each fld In rst.Fields
+    Debug.Print fld.Name
+Next
+
+rst.Close
+
+End Function
